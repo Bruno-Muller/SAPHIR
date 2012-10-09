@@ -16,7 +16,8 @@ SET [current_line_vram], [vram]
 SET PUSH, A
 SET A, [current_line_vram]
 :clear_loop
-SET [A], 0x0
+SET [A], 0x0020
+ADD [A], [format_bgd]
 ADD A, 1
 IFN A, [vram_end]
 	SET PC, clear_loop
@@ -36,7 +37,8 @@ SET [current_line_buff], [screen_buff_start]
 SET PUSH, A
 SET A, [current_line_buff]
 :clear_b_loop
-SET [A], 0x0
+SET [A], 0x0020
+ADD [A], [format_bgd]
 ADD A, 1
 IFN A, [screen_buff_end]
 	SET PC, clear_b_loop
@@ -53,19 +55,40 @@ SET PC, POP
 ;change screen background, receive B (0x0B00) as color parameter
 :scn_bgnd
 SET PUSH, C
+SET [format_bgd], B
 IFE A, [VRAM]
 	SET C, [vram_end]
 IFE A, [screen_buff_start]
 	SET C, [screen_buff_end]
 :scn_bgnd_l
-IFN [A], 0
-	ADD [A], B
+ADD [A], [format_bgd]
 ADD A, 1
 IFN A, C
 	SET PC, scn_bgnd_l
-ADD [A], B
 SET C, POP
 SET PC, POP
+
+;**********************
+;Reset background to black before 
+;INPUT : B - background color / A - screen or buffer [vram] / [screen_buff_start]			  
+;OUTPUT : NONE            
+;CALLS : NONE             
+;**********************
+:blck_bgd
+SET PUSH, C
+IFE A, [VRAM]
+	SET C, [vram_end]
+IFE A, [screen_buff_start]
+	SET C, [screen_buff_end]
+:blck_bgd_l	
+SUB [A], [format_bgd]
+ADD A, 1
+IFN A, C
+	SET PC, blck_bgd_l
+SET [format_bgd], 0x0000
+SET C, POP
+SET PC, POP
+
 
 
 ;***********************************************************

@@ -41,6 +41,7 @@ SET I, 0
 SET X, [vram]
 SET [X], [prompt]
 ADD [X], [format_str]
+ADD [X], [format_bgd]
 ADD X, 1
 SET B, [kb_buff]
 :waitstr_l
@@ -56,6 +57,7 @@ SET [B], C
 SET [last_input], C
 SET [X], C
 ADD [X], [format_str]
+ADD [X], [format_bgd]
 IFE [B], 0x0020
 	SET [B], 0x0
 ADD I, 1
@@ -80,7 +82,8 @@ IFN I, 0
 IFN I, 0
 	SUB I, 1
 SET [B], 0x0
-SET [X], 0x0
+SET [X], 0x0020
+ADD [X], [format_bgd]
 SET A, 0
 HWI [kb_id]
 SET PC, waitstr_l

@@ -12,6 +12,7 @@
 ;CALLS : string_hnadler.format_string / scndriver.write_video / scndriver.copy_buff             
 ;***********************************************
 :disp_welcome
+JSR bgnd
 SET B, welcome
 JSR format_string
 SET A, [screen_buff_start]
@@ -28,6 +29,7 @@ JSR copy_buff
 :clear
 SET B, 0x11
 JSR waitinput
+JSR bgnd
 :clear_no_wait
 JSR clear_scn
 JSR clear_sys
@@ -58,6 +60,7 @@ JSR malloc
 SET PC, clear_no_wait
 
 :exec_chain
+JSR black
 SET A, [kb_buff]
 ADD A, 5
 SET B, [A]
@@ -66,3 +69,19 @@ ADD B, 0xFF00
 JSR search_add
 JSR exec
 SET PC, clear
+
+:black
+SET A, [vram]
+JSR blck_bgd
+SET A, [screen_buff_start]
+JSR blck_bgd
+SET PC, POP
+
+:bgnd
+SET B, 0x0100
+SET A, [vram]
+JSR scn_bgnd
+SET B, 0x0100
+SET A, [screen_buff_start]
+JSR scn_bgnd
+SET PC, POP

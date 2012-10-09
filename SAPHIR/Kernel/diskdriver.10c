@@ -22,7 +22,7 @@ SET PC, POP
 ;********************************************
 ;preload first sector to buffer for analysis
 ;INPUT : NONE		  
-;OUTPUT : B - size to alloc / C - number of sectors to read to ram           
+;OUTPUT : C - number of sectors to read to ram           
 ;CALLS : NONE             
 ;*********************************************
 :preload

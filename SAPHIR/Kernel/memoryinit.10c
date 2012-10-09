@@ -6,7 +6,12 @@
 ; --------------------------------------------
 ;Memory format // 0x4D41 0xFFid 0xsize [...]
 
-;compute available mem
+;********************************************************************************
+;Compute free memory
+;INPUT : NONE
+;OUTPUT : NONE  
+;CALLS : NONE        
+;********************************************************************************
 :free_mem
 SET push, A
 SET push, B
@@ -22,7 +27,7 @@ SET PC, POP
 
 ;********************************************************************************
 ;search for free mem and allocate it to a program
-;INPUT : b <- size / C <- number of block to load
+;INPUT : B <- size / C <- number of block to load
 ;OUTPUT : A -> pointer to start of prog    
 ;CALLS : appmanager.addid / diskdriver.load_disk           
 ;********************************************************************************

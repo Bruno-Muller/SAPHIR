@@ -21,7 +21,8 @@ set PC, END
 :app_manager DAT 0x0700
 :max_app DAT 16
 :last_input DAT 0x0
-:format_str DAT 0xF000
+:format_str DAT 0x9000
+:format_bgd DAT 0x0000
 :kb_buff DAT 0x9000
 
 ;OS variables

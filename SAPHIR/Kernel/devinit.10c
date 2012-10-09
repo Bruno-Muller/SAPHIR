@@ -48,6 +48,8 @@ SET [screen_id], J
 SET A, 0
 SET B, 0x8000
 HWI J
+JSR clear_vbuff
+JSR clear_scn
 SET PC, pop
 
 ;**********************
