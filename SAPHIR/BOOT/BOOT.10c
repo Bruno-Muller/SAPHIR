@@ -1,0 +1,12 @@
+; --------------------------------------------
+; Title:   BOOT								  
+; Author:  Mahzel							  
+; Date:    13/09/2012						  
+; Version: 0.1a								  
+; --------------------------------------------
+
+JSR free_mem
+JSR format_tab
+JSR dev_init
+JSR disp_welcome
+JSR END

@@ -1,0 +1,99 @@
+; --------------------------------------------
+; Title:   memoryinit
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+;Memory format // 0x4D41 0xFFid 0xsize [...]
+
+;compute available mem
+:free_mem
+SET push, A
+SET push, B
+SET A, [start_ram]
+SET B, [end_ram]
+SUB B, A
+SET [free_ram], B
+SET C, B
+SET B, POP
+SET A, POP
+SET PC, POP
+;end free_mem
+
+;********************************************************************************
+;search for free mem and allocate it to a program
+;INPUT : b <- size / C <- number of block to load
+;OUTPUT : A -> pointer to start of prog    
+;CALLS : appmanager.addid / diskdriver.load_disk           
+;********************************************************************************
+:malloc
+SET A, [start_ram]
+IFN [proc_id_n], [max_app]
+	SET PC, malloc_loop
+:mall_err
+JSR clear_sys
+SET PC, POP
+:malloc_loop ;search for a free cell
+IFE [A], 0x4D41
+	SET PC, skip_alloc
+IFG A, [end_ram]
+	SET PC, mall_err
+ADD A, 3
+ADD A, B
+IFG A, [end_ram]
+	SET PC, mall_err
+SUB A, B
+SUB A, 3
+SET [A], 0x4D41
+ADD A, 2
+SET [A], B
+ADD [proc_id_n], 1
+ADD A, 1
+JSR addid
+SET X, A
+JSR load_disk
+JSR clear_sys
+SET PC, POP
+:skip_alloc
+ADD A, 2
+SET X, A
+ADD A, [X]
+ADD A, 1
+SET PC, malloc_loop
+
+;**********************
+;clear system buffer
+;INPUT : NONE			  
+;OUTPUT : NONE 
+;CALLS : NONE             
+;**********************
+:clear_sys
+SET A, [sys_buff]
+:clear_sys_l
+IFG A, [sys_buff_end]
+	SET PC, POP
+SET [A], 0x0
+ADD A, 1
+SET PC, clear_sys_l
+
+;**********************
+;copy pre-loaded pg from sys buffer to a ram address
+;INPUT : A <- adress to cpy buffer			  
+;OUTPUT : NONE 
+;CALLS : NONE             
+;**********************
+:copy_sys_buff
+SET I, 0
+SET C, [sys_buff]
+SUB A, 1
+SET B, [A]
+ADD B, 1
+ADD A, 1
+:sys_app_l
+IFE I, B
+	SET PC, POP
+SET [A], [C]
+ADD A, 1
+ADD C, 1
+ADD I, 1
+SET PC, sys_app_l

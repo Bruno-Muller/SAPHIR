@@ -1,0 +1,86 @@
+; --------------------------------------------
+; Title:   kbdriver
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+;**********************
+;wait for user input
+;INPUT : B <- key trigger			  
+;OUTPUT : C -> TRUE (1)   
+;CALLS : NONE             
+;**********************
+;params B <- input to exit loop
+:waitinput
+SET A, 0
+HWI [kb_id]
+SET C, 0
+SET A, 2
+HWI [kb_id]
+IFE C, 1
+	SET PC, POP
+SET PC, waitinput
+
+;**********************
+;wait for string
+;INPUT : NONE			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+;wait for a string to be entered
+:waitstring
+SET PUSH, I
+SET PUSH, A
+SET PUSH, B
+SET PUSH, C
+SET A, 0
+HWI [kb_id]
+SET C, 0
+SET I, 0
+SET X, [vram]
+SET [X], [prompt]
+ADD [X], [format_str]
+ADD X, 1
+SET B, [kb_buff]
+:waitstr_l
+SET A, 1
+HWI [kb_id]
+IFE C, 0
+	SET PC, waitstr_l
+IFE C, 0x11
+	SET PC, endwaitstr
+IFE C, 0x10
+	SET PC, backwaitstr
+SET [B], C
+SET [last_input], C
+SET [X], C
+ADD [X], [format_str]
+IFE [B], 0x0020
+	SET [B], 0x0
+ADD I, 1
+ADD B, 1
+ADD X, 1
+SET A, 0
+HWI [kb_id]
+IFE I, 0xF
+	SET PC, endwaitstr
+SET PC, waitstr_l
+:endwaitstr
+SET C, POP
+SET B, POP
+SET A, POP
+SET I, POP
+SET PC, POP
+:backwaitstr
+IFN I, 0
+	SUB B, 1
+IFN I, 0
+	SUB X, 1
+IFN I, 0
+	SUB I, 1
+SET [B], 0x0
+SET [X], 0x0
+SET A, 0
+HWI [kb_id]
+SET PC, waitstr_l

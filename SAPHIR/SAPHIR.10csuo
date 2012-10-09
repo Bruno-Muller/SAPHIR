@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<solution name="SAPHIR" path="C:\Users\Mahzel\CloudStation\0x10c Devkit\Saphir\Saphir.10csln" currentFile="SYS\sysdisplay.10c">
+  <openFiles>
+    <file path="Kernel\diskdriver.10c" />
+    <file path="Kernel\DATA.10c" />
+    <file path="BOOT\BOOT.10c" />
+    <file path="Kernel\memoryinit.10c" />
+    <file path="Kernel\appmanager.10c" />
+    <file path="Kernel\devinit.10c" />
+    <file path="Kernel\clkdriver.10c" />
+    <file path="Kernel\screendriver.10c" />
+    <file path="Kernel\kbdriver.10c" />
+    <file path="Kernel\string_handler.10c" />
+    <file path="SYS\sysdisplay.10c" />
+  </openFiles>
+</solution>

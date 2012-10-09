@@ -1,0 +1,63 @@
+; --------------------------------------------
+; Title:   string_handler
+; Author:  Mahzel
+; Date:    20/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+;**********************
+;format string to a displayable format
+;INPUT : B <- raw data		  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:format_string
+SET PUSH, A
+SET A, [sys_buff]
+:format_str_l
+IFE [B], 0x0000
+	SET PC, end_format
+IFE [B], 1
+	SET PC, format_str_skip
+SET [A], [B]
+ADD [A], [format_str]
+ADD A, 1
+ADD B, 1
+SET PC, format_str_l
+:format_str_skip
+SET [A], [B]
+ADD B, 1
+ADD A, 1
+IFG A, [sys_buff_end]
+	SET PC, end_format
+SET PC, format_str_l
+:end_format
+SET A, POP
+SET PC, POP
+
+
+;**********************
+;compare two strings
+;INPUT : A <- str1 / B<- str2		  
+;OUTPUT : C -> 1 (true) / 0 (false) 
+;CALLS : NONE             
+;**********************
+:strcomp
+SET C, 0
+:comp_l
+IFE [A], [B]
+	SET C, 1
+IFN [A], [B]
+	SET PC, endfalse
+IFE [A], 0
+	SET PC, endcomp
+IFE [B], 0
+	SET PC, endcomp
+ADD A, 1
+ADD B, 1
+SET PC, comp_l
+:endfalse
+IFN [A], [B]
+	SET C, 0
+:endcomp
+SET PC, POP

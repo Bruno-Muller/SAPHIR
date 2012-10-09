@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<solution>
+  <name>SAPHIR</name>
+  <properties>
+    <property name="emuLoad.projectName">BOOT</property>
+    <property name="emuLoadMode">project</property>
+  </properties>
+  <projects>
+    <project path="Kernel\Kernel.10cproj" />
+    <project path="BOOT\BOOT.10cproj" />
+    <project path="floppy\floppy.10cproj" />
+    <project path="SYS\SYS.10cproj" />
+  </projects>
+</solution>

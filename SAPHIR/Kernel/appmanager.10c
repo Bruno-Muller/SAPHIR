@@ -1,0 +1,94 @@
+; --------------------------------------------
+; Title:   appmanager
+; Author:  Mahzel
+; Date:    17/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+;Manage applications loaded in memory
+;Table with PgID and address
+;0x0700 FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr
+;0x0710 FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr FFid addr
+;16 loaded program max
+
+;**********************
+;create program table (empty)
+;INPUT : NONE			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:format_tab
+SET PUSH, A
+SET PUSH, B
+SET PUSH, I
+SET A, [app_manager]
+SET B, A
+ADD B, 0x0020
+SET I, 0
+:format_tab_l
+SET [A], 0xFF00
+ADD [A], I
+ADD A, 1
+SET [A], 0x0
+ADD I, 1
+ADD A, 1
+IFN A, B
+	SET PC, format_tab_l
+SET I, POP
+SET B, POP
+SET A, POP
+SET PC, POP
+
+;**********************
+;add a program to the table
+;INPUT : A <- start of free mem allocated			  
+;OUTPUT : A -> start of free mem allocated 
+;CALLS : NONE             
+;**********************
+:addid
+SET I, [app_manager]
+ADD I, 1
+:addid_loop
+IFE [I], 0x0
+	SET PC, insertid
+ADD I, 2
+SET PC, addid_loop
+:insertid
+SET [I], A 	;ins start of free aloc in prog table
+SUB A, 2
+SUB I, 1
+SET [A], [I]
+ADD A, 2
+SET PC, POP
+
+;**********************
+;search the adress of a given ID
+;INPUT : B <- FFid		  
+;OUTPUT : A -> pointer to program start  
+;CALLS : NONE             
+;**********************
+:search_add
+SET A, [app_manager]
+:search_al
+IFE [A], B
+	SET PC, get_addr
+ADD A, 2
+SET PC, search_al
+:get_addr
+ADD A, 1
+SET B, [A]
+SET PC, POP
+
+;*******************************************************************
+;execute the given program while saving the PC to come back from it
+;INPUT : B <- program address			  
+;OUTPUT : NONE  
+;CALLS : scndriver.clear_scn             
+;******************************************************************
+:exec
+JSR clear_scn
+SET I, PC
+ADD I, 4
+SET PUSH, I
+SET PC, B
+SET PC, POP

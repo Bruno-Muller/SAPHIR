@@ -1,0 +1,93 @@
+; --------------------------------------------
+; Title:   devinit
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+;kb 0x30cf7406
+;clk 0x12d0b402
+;screen 0x7349f615
+;disk reader 0x74fa4cae
+;floppy 0x4CAE
+
+;**********************
+;initialize device routine
+;INPUT : NONE			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:dev_init
+HWN [nb_device]
+SET J, 0
+:enumeration
+IFE [nb_device], J
+ SET PC, POP
+HWQ J
+IFE B, 0x30CF
+	JSR kbinit
+IFE B, 0x12D0
+	JSR clkinit
+IFE B, 0x7349
+	JSR scninit
+IFE B, 0x74fa
+	JSR diskinit
+ADD J, 1
+SET PC, enumeration
+
+;**********************
+;initialize screen
+;INPUT : J <- hardware id			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:scninit
+ADD [nb_screen], 1
+IFG [nb_screen], 1
+	SET PC, POP
+SET [screen_id], J
+SET A, 0
+SET B, 0x8000
+HWI J
+SET PC, pop
+
+;**********************
+;initialize keyboard
+;INPUT : J <- hardware id			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:kbinit
+ADD [nb_kb], 1
+IFG [nb_kb], 1
+	SET PC, POP
+SET [kb_id], J
+SET PC, POP
+
+;**********************
+;initialize clock
+;INPUT : J <- hardware id			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:clkinit
+ADD [nb_clk], 1
+IFG [nb_clk], 1
+	SET PC, POP
+SET [clk_id], J
+SET A, 0
+SET B, 60
+HWI J
+SET PC, POP
+
+;**********************
+;initialize disk
+;INPUT : J <- hardware id			  
+;OUTPUT : NONE  
+;CALLS : NONE             
+;**********************
+:diskinit
+ADD [nb_disk], 1
+IFG [nb_disk], 1
+	SET PC, POP
+SET [disk_id], J
+SET PC, POP

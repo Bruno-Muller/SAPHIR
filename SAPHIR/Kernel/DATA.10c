@@ -1,0 +1,50 @@
+; --------------------------------------------
+; Title:   DATA
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+:END
+set PC, END
+
+;OS defines
+:start_ram DAT 0x2000
+:end_ram DAT 0x7EFF
+:vram DAT 0x8000
+:vram_end DAT 0x81FF
+:screen_buff_start DAT 0x8200
+:screen_buff_end DAT 0x83FF
+:screen_2_start DAT 0x8400
+:screen_2_end DAT 0x85FF
+:sys_buff DAT 0x1000
+:sys_buff_end DAT 0x1FFF
+:app_manager DAT 0x0700
+:max_app DAT 16
+:last_input DAT 0x0
+:format_str DAT 0xF000
+:kb_buff DAT 0x9000
+
+;OS variables
+:free_ram DAT 0x0
+:nb_device DAT 0x0
+:kb_id DAT 0x0
+:nb_kb DAT 0x0
+:disk_id DAT 0x0
+:nb_disk DAT 0x0
+:screen_id DAT 0x0
+:nb_screen DAT 0x0
+:clk_id DAT 0x0
+:nb_clk DAT 0x0
+:current_proc_id DAT 0x0
+:proc_id_n DAT 0x0
+:current_line_vram DAT 0x8000
+:current_line_buff DAT 0x8200
+:write_to_video DAT 0x0001 ;0x0001 VRAM // 0x0002 Buffer
+
+;OS text
+:welcome DAT "Welcome on SiOS v0.1", 1, "System loaded", 1, "Good Flight", 1,"Press Enter to continue", 0
+:prompt DAT ">", 0
+:ready DAT "ready", 0
+:load_cmd DAT "load", 0
+:exec_cmd DAT "exec", 0
+:unload_cmd DAT "unload", 0

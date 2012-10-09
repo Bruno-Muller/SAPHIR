@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project version="1.7.5" type="disk">
+  <name>floppy</name>
+  <properties>
+    <property name="outputFilename">floppy.10cdisk</property>
+    <property name="compress">False</property>
+    <property name="filesystem.enabled">False</property>
+    <property name="filesystem.type">Structureless</property>
+    <property name="autoLoad.enabled">True</property>
+    <property name="versionIncrement">10</property>
+    <property name="code.generateSelfRelocatingCode">False</property>
+  </properties>
+  <references />
+  <files>
+    <file path="..\..\test\test\test.bin">
+      <property name="Identifier">test</property>
+    </file>
+    <file path="..\..\test\test\test.hex">
+      <property name="providerFileTypeName">Binary Resource file</property>
+      <property name="Identifier">testdata</property>
+    </file>
+  </files>
+</project>

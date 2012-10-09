@@ -1,0 +1,155 @@
+; --------------------------------------------
+; Title:   screendriver
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+;**********************
+;clear screen function
+;INPUT : NONE			  
+;OUTPUT : NONE         
+;CALLS : NONE             
+;**********************
+:clear_scn
+SET [current_line_vram], [vram]
+SET PUSH, A
+SET A, [current_line_vram]
+:clear_loop
+SET [A], 0x0
+ADD A, 1
+IFN A, [vram_end]
+	SET PC, clear_loop
+SET [A], 0x0
+SET A, POP
+SET PC, POP
+
+;*****************************
+;clear screen buffer function
+;INPUT : NONE			  
+;OUTPUT : NONE            
+;CALLS : NONE             
+;*****************************
+;clear screen buffer function
+:clear_vbuff
+SET [current_line_buff], [screen_buff_start]
+SET PUSH, A
+SET A, [current_line_buff]
+:clear_b_loop
+SET [A], 0x0
+ADD A, 1
+IFN A, [screen_buff_end]
+	SET PC, clear_b_loop
+SET [A], 0x0
+SET A, POP
+SET PC, POP
+
+;**********************
+;Change screen background
+;INPUT : B - background color / A - screen or buffer [vram] / [screen_buff_start]			  
+;OUTPUT : NONE            
+;CALLS : NONE             
+;**********************
+;change screen background, receive B (0x0B00) as color parameter
+:scn_bgnd
+SET PUSH, C
+IFE A, [VRAM]
+	SET C, [vram_end]
+IFE A, [screen_buff_start]
+	SET C, [screen_buff_end]
+:scn_bgnd_l
+IFN [A], 0
+	ADD [A], B
+ADD A, 1
+IFN A, C
+	SET PC, scn_bgnd_l
+ADD [A], B
+SET C, POP
+SET PC, POP
+
+
+;***********************************************************
+;write to video buffer or vram
+;INPUT : A - screen_buff_start or vram // B - data start
+;OUPUT : NONE
+;CALLS : line_vram & line_vbuff - "next line function"
+;Datas end flag must be 0x0000 and less than 512 words long
+;data must be preformated with format functions
+;***********************************************************
+:write_video
+SET PUSH, I
+SET PUSH, C
+SET I, write_to_video
+IFE A, [vram]
+	SET [I], 1
+IFE A, [screen_buff_start]
+	SET [I], 2
+IFE [I], 0
+	SET PC, end_w_buff
+SET C, A
+ADD C, 0x01FF
+:wte_loop
+IFE [B], 0x0000
+	SET PC, end_w_buff
+IFG A, C
+	SET PC, end_w_buff
+IFE [B], 0x0001
+	SET PC, next_line
+SET [A], [B]
+ADD A, 1
+ADD B, 1
+SET PC, wte_loop
+:end_w_buff
+SET C, POP
+SET I, POP
+SET PC, POP
+:next_line
+ADD B, 1
+IFE [I], 1
+	JSR line_vram
+IFE [I], 2
+	JSR line_vbuff
+SET PC, wte_loop
+
+;*********************************************************
+;next line function - for write video" function (mainly)
+;INPUT : NONE			  
+;OUTPUT : A - pointer to new line          
+;CALLS : clear_scn             
+;*********************************************************
+:line_vram
+IFE [current_line_vram], 0x81E0
+	JSR clear_scn
+ADD [current_line_vram], 0x0020
+SET A, [current_line_vram]
+SET PC, POP
+:line_vbuff
+IFE [current_line_buff], 0x83E0
+	JSR clear_vbuff
+ADD [current_line_buff], 0x0020
+SET A, [current_line_buff]
+SET PC, POP
+
+;**********************
+;;copy buffer to screen
+;INPUT : NONE		  
+;OUTPUT : NONE            
+;CALLS : NONE             
+;**********************
+:copy_buff
+SET PUSH, A
+SET PUSH, B
+SET A, [screen_buff_start]
+SET B, [vram]
+:copy_s_loop
+IFN [A], [B]
+	SET [B], [A]
+ADD A, 1
+ADD B, 1
+IFE B, [vram_end]
+	SET PC, end_copy_buff
+SET PC, copy_s_loop
+:end_copy_buff
+SET B, POP
+SET A, POP
+SET PC, POP

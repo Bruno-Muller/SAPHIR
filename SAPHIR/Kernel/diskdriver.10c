@@ -1,0 +1,73 @@
+; --------------------------------------------
+; Title:   diskdriver
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+
+;**********************
+;test if media is present
+;INPUT : NONE		  
+;OUTPUT : NONE            
+;CALLS : NONE             
+;**********************
+:test_media
+SET PUSH, A
+SET A, 0x0000
+HWI [disk_id]
+SET A, POP
+SET PC, POP
+
+;********************************************
+;preload first sector to buffer for analysis
+;INPUT : NONE		  
+;OUTPUT : B - size to alloc / C - number of sectors to read to ram           
+;CALLS : NONE             
+;*********************************************
+:preload
+SET A, 0x0010
+SET B, 0x0000
+SET C, 0x0001
+SET X, [sys_buff]
+HWI [disk_id]
+SET X, [sys_buff]
+ADD X, 1
+SET B, [X]
+SET C, [X]
+DIV C, 0x0200
+ADD C, 1
+SET PC, POP
+
+
+;********************************************************************************
+;load sectors to ram
+;INPUT : C - number of sectors to read to ram  / X - ram location to copy in	  
+;OUTPUT :         
+;CALLS : NONE             
+;********************************************************************************
+:load_disk
+SET PUSH, A
+SET PUSH, B
+SET A, 0x0010
+SET B, 0x0000
+HWI [disk_id]
+SET A, X
+SUB X, 1
+ADD A, [X]
+ADD A, 1
+:load_l
+IFN [A], 0x0
+	SET PC, load_cl
+:end_load
+SET B, POP
+SET A, POP
+SET PC, POP
+:load_cl
+IFN [A], 0x4D41
+	SET [A], 0x0
+IFE [A], 0x4D41
+	SET PC, end_load
+ADD A, 1
+SET PC, load_l
+

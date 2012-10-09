@@ -1,0 +1,68 @@
+; --------------------------------------------
+; Title:   sysdisplay
+; Author:  Mahzel
+; Date:    18/09/2012
+; Version: 0.1a
+; --------------------------------------------
+
+;***********************************************
+;present welcome screen
+;INPUT : NONE			  
+;OUTPUT : NONE         
+;CALLS : string_hnadler.format_string / scndriver.write_video / scndriver.copy_buff             
+;***********************************************
+:disp_welcome
+SET B, welcome
+JSR format_string
+SET A, [screen_buff_start]
+SET B, [sys_buff]
+JSR write_video
+JSR copy_buff
+
+;**********************
+;clear main window
+;INPUT : NONE			  
+;OUTPUT : NONE         
+;CALLS : kbdriver.wait_input/scndriver.clear_scn/memoryinit.clear_sys            
+;**********************
+:clear
+SET B, 0x11
+JSR waitinput
+:clear_no_wait
+JSR clear_scn
+JSR clear_sys
+SET PC, command
+
+:command
+JSR waitstring
+SET PC, test_command
+
+
+:test_command
+SET A, load_cmd
+SET B, [kb_buff]
+JSR strcomp
+IFE C, 1
+	JSR load_chain
+SET A, exec_cmd
+SET B, [kb_buff]
+JSR strcomp
+IFE C, 1
+	JSR exec_chain
+
+:load_chain
+JSR test_media
+IFE B, 1
+	JSR preload
+JSR malloc
+SET PC, clear_no_wait
+
+:exec_chain
+SET A, [kb_buff]
+ADD A, 5
+SET B, [A]
+SUB B, 0x0030
+ADD B, 0xFF00
+JSR search_add
+JSR exec
+SET PC, clear

@@ -1,0 +1,20 @@
+; --------------------------------------------
+; Title:   test
+; Author:  Mahzel
+; Date:    13/09/2012
+; Version: 0.1A
+; --------------------------------------------
+ADD PC, 6
+:taille DAT 0x0012
+:test DAT "data", 1
+SET A, 0x8000
+SET I, PC
+SUB I, 8
+:boucle
+IFE [I], 1
+	SET PC, POP
+SET [A], [I]
+ADD [A], 0xF000
+ADD A, 1
+ADD I, 1
+SUB PC, 8
