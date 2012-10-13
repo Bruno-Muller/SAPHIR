@@ -33,6 +33,7 @@ JSR bgnd
 :clear_no_wait
 JSR clear_scn
 JSR clear_sys
+JSR clear_vbuff
 SET PC, command
 
 :command
@@ -57,11 +58,22 @@ JSR test_media
 IFE B, 1
 	JSR preload
 JSR malloc
-SET PC, clear_no_wait
+SET B, pg_loaded
+JSR format_string
+SET B, [sys_buff]
+ADD B, 20
+SET [B], Z
+SUB [B], 0xFF00
+ADD [B], 0x9130
+SET A, [screen_buff_start]
+SET B, [sys_buff]
+JSR write_video
+JSR copy_buff
+SET PC, clear
 
 :exec_chain
 JSR black
-SET A, [kb_buff]
+SET A, kb_buff
 ADD A, 5
 SET B, [A]
 SUB B, 0x0030

@@ -1,4 +1,4 @@
-    SiOS - Simple OS for 0x10c from Notch <http://0x10c.com/>
+    SAPHIR : an little OS for Notch great game 0x10c <http://0x10c.com/>
 
 
     Copyright (C) 2012  Marc Falabregues "Mahzel"

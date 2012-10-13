@@ -42,7 +42,7 @@ SET PC, POP
 ;**********************
 ;add a program to the table
 ;INPUT : A <- start of free mem allocated			  
-;OUTPUT : A -> start of free mem allocated 
+;OUTPUT : A -> start of free mem allocated,  Z -> pg id
 ;CALLS : NONE             
 ;**********************
 :addid
@@ -58,6 +58,7 @@ SET [I], A 	;ins start of free aloc in prog table
 SUB A, 2
 SUB I, 1
 SET [A], [I]
+SET Z, [I]
 ADD A, 2
 SET PC, POP
 

@@ -49,3 +49,4 @@ set PC, END
 :load_cmd DAT "load", 0
 :exec_cmd DAT "exec", 0
 :unload_cmd DAT "unload", 0
+:pg_loaded DAT "program loaded : ID ", 0
